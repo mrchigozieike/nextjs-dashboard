@@ -1,10 +1,19 @@
-import bcrypt from 'bcrypt';
+const bcrypt = await import('bcryptjs');
+
 import postgres from 'postgres';
 import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+async function dropDatabase() {
+  console.log('🔄 Dropping existing tables...');
+  await sql`
+    DROP TABLE IF EXISTS invoices, customers, revenue, users CASCADE;
+  `;
+}
+
 async function seedUsers() {
+  
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   await sql`
     CREATE TABLE IF NOT EXISTS users (
